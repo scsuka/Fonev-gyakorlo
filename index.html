@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Főnév gyakorló</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Caveat:wght@700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a single short column with two steps, learn first, then test. Tokens match the Kisokos and the quiz. */
+:root{
+  --paper:#F3F5FA; --surface:#FFFFFF; --ink:#141B33; --muted:#59627F; --line:#D8DDEA;
+  --accent:#2445D1; --accent-soft:#E7ECFD;
+  --m-kepzo:#7B3FC4; --m-jel:#0E7F86; --m-rag:#B35F16; --m-to:#141B33;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-hand:"Caveat","Segoe Print","Comic Sans MS",cursive;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0E1324; --surface:#161D33; --ink:#E7EBF6; --muted:#9BA4C2; --line:#2B3454;
+    --accent:#8FA5FF; --accent-soft:#1F2A55;
+    --m-kepzo:#C39BFF; --m-jel:#4FD1D9; --m-rag:#F2A35E; --m-to:#E7EBF6;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+p{margin:0}
+.wrap{max-width:40rem;margin:0 auto;padding-block:2.5rem 3rem;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:1.75rem}
+.eyebrow{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(2.5rem,9vw,3.5rem);line-height:1;margin:.4rem 0 0;letter-spacing:-.02em}
+.note{font-family:var(--f-hand);font-weight:700;font-size:1.7rem;color:var(--accent);transform:rotate(-2deg);transform-origin:left;line-height:1.1;margin-top:.6rem}
+.dissect{display:flex;align-items:flex-start;margin:0}
+.seg{display:flex;flex-direction:column;color:var(--c)}
+.seg b{font-family:var(--f-display);font-weight:700;font-size:clamp(1.9rem,8vw,2.6rem);line-height:1.05;padding:0 1px}
+.seg i{font-style:normal;font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:center;border-top:3px solid currentColor;margin:.3rem 3px 0;padding-top:.25rem;white-space:nowrap}
+.s-to{--c:var(--m-to)} .s-kepzo{--c:var(--m-kepzo)} .s-jel{--c:var(--m-jel)} .s-rag{--c:var(--m-rag)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.85rem}
+.step{display:flex;gap:1rem;align-items:center;padding:1.1rem 1.2rem;background:var(--surface);border:1px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none;transition:border-color .15s,background-color .15s}
+.step:hover{border-color:var(--accent);background:var(--accent-soft)}
+.num{flex:none;width:2.6rem;height:2.6rem;display:grid;place-items:center;border-radius:10px;background:var(--accent);color:var(--surface);font-family:var(--f-display);font-weight:800;font-size:1.25rem}
+.txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:.15rem}
+.tt{font-family:var(--f-display);font-weight:700;font-size:1.25rem;line-height:1.25}
+.ts{color:var(--muted);font-size:.95rem;line-height:1.45}
+.go{flex:none;font-size:1.4rem;font-weight:800;color:var(--accent)}
+.foot{font-size:.8rem;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Magyar nyelvtan · főnév</p>
+    <h1>Főnév gyakorló</h1>
+    <p class="note">Előbb tanulj, aztán teszteld magad!</p>
+  </header>
+
+  <figure class="dissect" aria-label="A kertészekben szó szóelemei: kert a tő, -ész a képző, -ek a jel, -ben a rag">
+    <span class="seg s-to" aria-hidden="true"><b>kert</b><i>tő</i></span>
+    <span class="seg s-kepzo" aria-hidden="true"><b>ész</b><i>képző</i></span>
+    <span class="seg s-jel" aria-hidden="true"><b>ek</b><i>jel</i></span>
+    <span class="seg s-rag" aria-hidden="true"><b>ben</b><i>rag</i></span>
+  </figure>
+
+  <ol class="steps">
+    <li>
+      <a class="step" href="kisokos.html">
+        <span class="num" aria-hidden="true">1</span>
+        <span class="txt"><span class="tt">Főnév Kisokos</span><span class="ts">7 rövid lecke a főnévről, mindegyikben egy kis játékkal.</span></span>
+        <span class="go" aria-hidden="true">→</span>
+      </a>
+    </li>
+    <li>
+      <a class="step" href="fonevproba.html">
+        <span class="num" aria-hidden="true">2</span>
+        <span class="txt"><span class="tt">Főnévpróba</span><span class="ts">52 kérdéses kvíz magyarázatokkal és tájékoztató jeggyel.</span></span>
+        <span class="go" aria-hidden="true">→</span>
+      </a>
+    </li>
+  </ol>
+
+  <p class="foot">A válaszokat és a nevet a program sehova nem küldi el, minden a saját böngésződben marad.</p>
+</main>
+</body>
+</html>

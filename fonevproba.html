@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Főnévpróba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Caveat:wght@700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one exercise-sheet column (max 44rem). The masthead dissects a sample noun into tő / képző / jel / rag;
+   below it a single sheet swaps between setup, question and result. Teacher's red pen appears only on the verdict and the grade. */
+:root{
+  --paper:#F3F5FA; --surface:#FFFFFF; --ink:#141B33; --muted:#59627F; --line:#D8DDEA;
+  --accent:#2445D1; --accent-ink:#FFFFFF; --accent-soft:#E7ECFD;
+  --ok:#17804F; --ok-soft:#E2F3EA; --bad:#C3332B; --bad-soft:#FBE8E6;
+  --m-to:#141B33; --m-kepzo:#7B3FC4; --m-jel:#0E7F86; --m-rag:#B35F16;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-hand:"Caveat","Segoe Print","Comic Sans MS",cursive;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1324; --surface:#161D33; --ink:#E7EBF6; --muted:#9BA4C2; --line:#2B3454;
+    --accent:#8FA5FF; --accent-ink:#0E1324; --accent-soft:#1F2A55;
+    --ok:#55C98E; --ok-soft:#12321F; --bad:#FF7B70; --bad-soft:#3A1918;
+    --m-to:#E7EBF6; --m-kepzo:#C39BFF; --m-jel:#4FD1D9; --m-rag:#F2A35E;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1324; --surface:#161D33; --ink:#E7EBF6; --muted:#9BA4C2; --line:#2B3454;
+  --accent:#8FA5FF; --accent-ink:#0E1324; --accent-soft:#1F2A55;
+  --ok:#55C98E; --ok-soft:#12321F; --bad:#FF7B70; --bad-soft:#3A1918;
+  --m-to:#E7EBF6; --m-kepzo:#C39BFF; --m-jel:#4FD1D9; --m-rag:#F2A35E;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0}
+[hidden]{display:none!important}
+a{color:var(--accent)}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+p{margin:0}
+
+.wrap{max-width:44rem;margin:0 auto;padding-block:2rem 3.5rem;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:1.5rem}
+
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(2.3rem,7vw,3.2rem);line-height:1;margin:0;letter-spacing:-.02em}
+h2{font-family:var(--f-display);font-weight:700;font-size:clamp(1.3rem,4.4vw,1.65rem);line-height:1.28;text-wrap:balance;margin:0}
+h2:focus{outline:none}
+h2:focus-visible{outline:3px solid var(--accent);outline-offset:4px;border-radius:4px}
+h3{font-family:var(--f-display);font-weight:700;font-size:1.05rem;margin:0}
+.muted{color:var(--muted)}
+
+/* Masthead */
+.masthead{display:flex;flex-direction:column;gap:.85rem}
+.dissect{display:flex;align-items:flex-start;margin:.35rem 0 0}
+.seg{display:flex;flex-direction:column;color:var(--c)}
+.seg b{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,9vw,3.3rem);line-height:1.05;letter-spacing:-.01em;padding:0 1px}
+.seg i{font-style:normal;font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;text-align:center;border-top:3px solid currentColor;margin:.35rem 3px 0;padding-top:.3rem;white-space:nowrap}
+.s-to{--c:var(--m-to)} .s-kepzo{--c:var(--m-kepzo)} .s-jel{--c:var(--m-jel)} .s-rag{--c:var(--m-rag)}
+.lede{max-width:60ch;color:var(--muted)}
+.wrap[data-view="quiz"] .dissect,.wrap[data-view="quiz"] .lede,
+.wrap[data-view="result"] .dissect,.wrap[data-view="result"] .lede{display:none}
+.wrap[data-view="quiz"] h1,.wrap[data-view="result"] h1{font-size:1.6rem}
+
+/* Sheet */
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:clamp(1.1rem,4vw,1.75rem);display:flex;flex-direction:column;gap:1.35rem;min-width:0}
+.field{display:flex;flex-direction:column;gap:.55rem;border:0;padding:0;margin:0;min-width:0}
+.label{font-size:.76rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:0}
+.note{font-size:.85rem;color:var(--muted)}
+
+.segctl{display:flex;flex-wrap:wrap;gap:.5rem;position:relative}
+.segctl input,.chip input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.segctl label{padding:.5rem 1.05rem;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-weight:600;font-variant-numeric:tabular-nums;background:var(--surface);color:var(--ink)}
+.segctl label:hover{border-color:var(--accent)}
+.segctl input:checked + label{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.segctl input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
+
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{position:relative;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;gap:.5rem;padding:.48rem .8rem;border:1px solid var(--line);border-radius:8px;font-weight:500;color:var(--muted);background:var(--surface);user-select:none}
+.chip span::before{content:"";width:1rem;height:1rem;border-radius:4px;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;font-size:.68rem;line-height:1}
+.chip:hover span{border-color:var(--accent)}
+.chip input:checked + span{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.chip input:checked + span::before{content:"✓";background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:800}
+.chip input:focus-visible + span{outline:3px solid var(--accent);outline-offset:2px}
+.chip em{font-style:normal;font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--muted)}
+
+input[type="text"]{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:.62rem .8rem;width:100%;max-width:22rem}
+input[type="text"]:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+
+.btn{font:inherit;font-weight:600;padding:.72rem 1.2rem;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;transition:border-color .15s,color .15s,filter .15s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.linkbtn{font:inherit;font-size:.9rem;background:none;border:0;padding:.3rem 0;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{color:var(--bad)}
+.start-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.warn{color:var(--bad);font-weight:600;font-size:.9rem}
+.hint{font-size:.85rem;color:var(--muted)}
+kbd{font-family:var(--f-body);font-size:.78rem;font-weight:600;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .3rem;background:var(--paper)}
+
+/* Quiz */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap}
+.topic-tag{font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:.28rem .6rem;border-radius:6px}
+.counter{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600;font-size:.92rem}
+.progress{height:6px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:-.5rem}
+.progress span{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .35s ease}
+#q-text b,.rq b{color:var(--accent);font-weight:800}
+
+.options{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
+.opt{width:100%;display:flex;align-items:center;gap:.85rem;text-align:left;font:inherit;font-size:1.02rem;line-height:1.4;padding:.78rem 1rem;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;transition:border-color .15s,background-color .15s,opacity .15s}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.opt:disabled{cursor:default;color:var(--ink)}
+.key{flex:none;width:1.9rem;height:1.9rem;display:grid;place-items:center;border-radius:6px;border:1px solid var(--line);font-weight:700;font-size:.85rem;color:var(--muted);background:var(--paper)}
+.txt{flex:1;min-width:0}
+.mark{flex:none;width:1.2rem;text-align:center;font-weight:800;font-size:1.1rem}
+.opt.is-correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.is-correct .key{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.opt.is-correct .mark{color:var(--ok)}
+.opt.is-wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.is-wrong .key{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.opt.is-wrong .txt{text-decoration:line-through;text-decoration-color:var(--bad);text-decoration-thickness:2px}
+.opt.is-wrong .mark{color:var(--bad)}
+.opt.is-dim{opacity:.5}
+
+.feedback{background:var(--paper);border-radius:10px;padding:.85rem 1.05rem 1rem;display:flex;flex-direction:column;gap:.35rem}
+.verdict{font-family:var(--f-hand);font-weight:700;font-size:1.75rem;line-height:1.1}
+.verdict.ok{color:var(--ok)} .verdict.bad{color:var(--bad)}
+.rule{max-width:62ch}
+.rule .label{margin-right:.35rem}
+.qfoot{display:flex;justify-content:space-between;align-items:center;gap:.75rem 1rem;flex-wrap:wrap}
+.qfoot-left{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.score{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:600;font-size:.92rem}
+
+/* Result */
+.result-top{display:flex;gap:1.4rem;align-items:center;flex-wrap:wrap}
+.result-top > div{min-width:0;display:flex;flex-direction:column;gap:.25rem}
+.grade{width:5.6rem;height:5.6rem;flex:none;display:grid;place-items:center;border:3px solid var(--bad);border-radius:47% 53% 44% 56% / 56% 44% 55% 45%;transform:rotate(-7deg);color:var(--bad);font-family:var(--f-hand);font-weight:700;font-size:3.9rem;line-height:1;padding-bottom:.25rem}
+.tablewrap{overflow-x:auto}
+.breakdown{width:100%;border-collapse:collapse;font-size:.95rem}
+.breakdown th,.breakdown td{padding:.55rem .5rem .55rem 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.breakdown th{font-weight:500}
+.breakdown td.num{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;color:var(--muted);font-weight:600;padding-right:1rem}
+.breakdown td.barcell{width:38%;padding-right:0}
+.minibar{display:block;height:8px;background:var(--line);border-radius:999px;overflow:hidden;min-width:4rem}
+.minibar span{display:block;height:100%;background:var(--accent);border-radius:999px}
+.minibar span.full{background:var(--ok)}
+.review{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.review li{padding:.9rem 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:.3rem}
+.review li:first-child{padding-top:0}
+.rq{font-weight:600}
+.ra{font-size:.95rem}
+.ra.bad{color:var(--bad)} .ra.bad s{text-decoration-thickness:2px}
+.ra.ok{color:var(--ok);font-weight:600}
+.rr{font-size:.9rem;color:var(--muted);max-width:62ch}
+.perfect{font-family:var(--f-hand);font-weight:700;font-size:1.6rem;color:var(--ok)}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap}
+#r-copytext{font:inherit;font-size:.9rem;width:100%;min-height:7rem;padding:.7rem;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
+.section{display:flex;flex-direction:column;gap:.7rem}
+
+.colophon{font-size:.8rem;color:var(--muted);max-width:62ch}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="wrap" data-view="start">
+  <header class="masthead">
+    <p class="eyebrow">Magyar nyelvtan · feleletválasztós kvíz</p>
+    <h1>Főnévpróba</h1>
+    <figure class="dissect" aria-label="A kertészekben szó szóelemei: kert a tő, -ész a képző, -ek a jel, -ben a rag">
+      <span class="seg s-to" aria-hidden="true"><b>kert</b><i>tő</i></span>
+      <span class="seg s-kepzo" aria-hidden="true"><b>ész</b><i>képző</i></span>
+      <span class="seg s-jel" aria-hidden="true"><b>ek</b><i>jel</i></span>
+      <span class="seg s-rag" aria-hidden="true"><b>ben</b><i>rag</i></span>
+    </figure>
+    <p class="lede"><span id="lede-n">52</span> kérdés a főnévről: fajták, toldalékok, szám és birtok, esetragok, tőváltozatok és helyesírás. Minden válasz után megjelenik a szabály, a végén pedig témakörönkénti összesítést és tájékoztató jegyet kapsz. Előbb tanulnál? Nézd meg a <a href="kisokos.html">Főnév Kisokost</a>!</p>
+  </header>
+
+  <main>
+    <!-- Setup -->
+    <section class="sheet" id="v-start" aria-labelledby="start-title">
+      <h2 id="start-title">Állítsd össze a kört</h2>
+
+      <fieldset class="field">
+        <legend class="label">Hány kérdés legyen?</legend>
+        <div class="segctl">
+          <input type="radio" name="count" id="c-10" value="10" checked><label for="c-10">10</label>
+          <input type="radio" name="count" id="c-20" value="20"><label for="c-20">20</label>
+          <input type="radio" name="count" id="c-all" value="all"><label for="c-all">Mind (<span id="c-all-n">52</span>)</label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend class="label">Témakörök</legend>
+        <div class="chips" id="topics"></div>
+      </fieldset>
+
+      <div class="field">
+        <label class="label" for="name">Neved</label>
+        <input type="text" id="name" maxlength="40" autocomplete="off" placeholder="pl. Kiss Anna">
+        <p class="note">Nem kötelező. Az eredménylapon és a kimásolt eredményben jelenik meg.</p>
+      </div>
+
+      <div class="start-row">
+        <button type="button" class="btn primary" id="start">Kezdjük · 10 kérdés</button>
+        <p class="warn" id="start-msg" aria-live="polite"></p>
+      </div>
+      <p class="hint">Billentyűzettel is megy: <kbd>1</kbd>–<kbd>4</kbd> vagy <kbd>A</kbd>–<kbd>D</kbd> a válasz, <kbd>Enter</kbd> a következő kérdés.</p>
+    </section>
+
+    <!-- Question -->
+    <section class="sheet" id="v-quiz" hidden aria-labelledby="q-text">
+      <div class="qhead">
+        <span class="topic-tag" id="q-topic">Témakör</span>
+        <span class="counter" id="q-counter">1. kérdés / 10</span>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="q-bar"></span></div>
+      <h2 id="q-text" tabindex="-1">Kérdés</h2>
+      <ol class="options" id="q-options" aria-label="Válaszlehetőségek"></ol>
+      <div aria-live="polite">
+        <div class="feedback" id="q-feedback" hidden>
+          <p class="verdict" id="q-verdict"></p>
+          <p class="rule"><span class="label">Szabály</span><span id="q-rule"></span></p>
+        </div>
+      </div>
+      <div class="qfoot">
+        <div class="qfoot-left">
+          <span class="score" id="q-score">Eddig 0 helyes</span>
+          <button type="button" class="linkbtn" id="q-quit">Kilépés</button>
+        </div>
+        <button type="button" class="btn primary" id="q-next" hidden>Következő kérdés</button>
+      </div>
+    </section>
+
+    <!-- Result -->
+    <section class="sheet" id="v-result" hidden aria-labelledby="r-head">
+      <div class="result-top">
+        <div class="grade" id="r-gradebox" role="img" aria-label="Tájékoztató jegy"><span id="r-grade" aria-hidden="true">5</span></div>
+        <div>
+          <p class="eyebrow" id="r-who">Eredménylap</p>
+          <h2 id="r-head" tabindex="-1">0 / 0 helyes válasz</h2>
+          <p class="muted" id="r-sub"></p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Témakörönként</h3>
+        <div class="tablewrap">
+          <table class="breakdown"><tbody id="r-break"></tbody></table>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 id="r-review-title">Átnézendő kérdések</h3>
+        <p class="perfect" id="r-perfect" hidden>Hibátlan! Minden kérdésre jól válaszoltál.</p>
+        <ol class="review" id="r-review"></ol>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn primary" id="r-retry">A hibás kérdések újra</button>
+        <button type="button" class="btn" id="r-new">Új kör</button>
+        <button type="button" class="btn" id="r-copy">Eredmény másolása</button>
+      </div>
+      <textarea id="r-copytext" readonly hidden aria-label="Az eredmény szövege"></textarea>
+      <p class="hint" id="r-copystatus" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <p class="colophon">A helyesírási kérdések a magyar helyesírás szabályainak 12. kiadását (AkH. 12.) követik. A jegy csak tájékoztató: 90%-tól jeles, 75%-tól jó, 60%-tól közepes, 40%-tól elégséges.</p>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var TOPICS = [
+  {id:'fajtak',   name:'A főnév fajtái'},
+  {id:'toldalek', name:'Toldalékok'},
+  {id:'szam',     name:'Szám és birtok'},
+  {id:'eset',     name:'Esetragok'},
+  {id:'hang',     name:'Hangrend, tőváltozatok'},
+  {id:'iras',     name:'Helyesírás'},
+  {id:'mondat',   name:'Névelő, mondatrész'}
+];
+
+/* a[0] mindig a helyes válasz; a sorrendet a program keveri. */
+var Q = [
+  /* A főnév fajtái */
+  {t:'fajtak', q:'Melyik kérdésre felel a <b>főnév</b>?',
+   a:['ki? mi?','milyen? mekkora?','mit csinál?','hány? hányadik?'],
+   e:'A főnév élőlényeket, tárgyakat, fogalmakat nevez meg, alapkérdése: ki? mi? A milyen? a melléknév, a mit csinál? az ige, a hány? a számnév kérdése.'},
+  {t:'fajtak', q:'Melyik szó <b>tulajdonnév</b>?',
+   a:['Balaton','tó','sziget','folyó'],
+   e:'A tulajdonnév egyetlen, egyedi dolgot vagy élőlényt nevez meg, ezért nagy kezdőbetűvel írjuk. A tó, a sziget és a folyó köznév: sok hasonló dolog közös neve.'},
+  {t:'fajtak', q:'Melyik szó <b>gyűjtőnév</b>?',
+   a:['erdő','fa','levél','gyökér'],
+   e:'A gyűjtőnév egyes számban is több egynemű dolgot nevez meg együtt: az erdő sok fából áll. Ilyen még a nyáj, a csapat és a lomb.'},
+  {t:'fajtak', q:'Melyik szó <b>anyagnév</b>?',
+   a:['homok','lapát','vödör','ásó'],
+   e:'Az anyagnév valamilyen anyagot nevez meg. Tetszés szerint osztható, és minden része ugyanaz az anyag marad: homok, víz, liszt, arany.'},
+  {t:'fajtak', q:'Melyik szó <b>elvont főnév</b>?',
+   a:['bátorság','kard','pajzs','lovag'],
+   e:'Az elvont főnév érzékszerveinkkel nem érzékelhető fogalmat, tulajdonságot vagy érzelmet nevez meg: bátorság, szeretet, öröm, igazság.'},
+  {t:'fajtak', q:'Melyik sorban van <b>csak gyűjtőnév</b>?',
+   a:['nyáj, csorda, raj','nyáj, juhász, bárány','csorda, tehén, legelő','raj, méh, kaptár'],
+   e:'A nyáj (juhok), a csorda (szarvasmarhák) és a raj (méhek vagy madarak) egynemű élőlények csoportja. A juhász, a tehén vagy a méh egyetlen élőlény neve.'},
+  {t:'fajtak', q:'A köznevek közül melyik <b>egyedi név</b>?',
+   a:['ceruza','Budapest','liszt','osztály'],
+   e:'Az egyedi név egy-egy dolgot nevez meg a sok hasonló közül: ceruza, asztal, kutya. A Budapest tulajdonnév, a liszt anyagnév, az osztály gyűjtőnév.'},
+  {t:'fajtak', q:'Milyen tulajdonnév a <b>Bodri</b>?',
+   a:['állatnév','személynév','földrajzi név','intézménynév'],
+   e:'Az állatokat is megnevezhetjük tulajdonnévvel: Bodri, Cirmi, Villám. Ezeket is nagy kezdőbetűvel írjuk.'},
+  {t:'fajtak', q:'Melyik <b>földrajzi név</b>?',
+   a:['Mátra','Mátyás','Nemzeti Színház','Cirmos'],
+   e:'Földrajzi név a hegyek, folyók, települések és országok neve: Mátra, Tisza, Debrecen, Kenya. A Mátyás személynév, a Nemzeti Színház intézménynév, a Cirmos állatnév.'},
+  {t:'fajtak', q:'„A Duna Európa második leghosszabb folyója.” Melyik szó <b>köznév</b> ebben a mondatban?',
+   a:['folyója','Duna','Európa','leghosszabb'],
+   e:'A folyó köznév (itt birtokos személyjellel: folyója), mert minden folyót így nevezünk. A Duna és az Európa tulajdonnév, a leghosszabb melléknév.'},
+  {t:'fajtak', q:'Melyik szó <b>nem</b> főnév?',
+   a:['gyors','gyorsaság','sebesség','verseny'],
+   e:'A gyors melléknév: tulajdonságot fejez ki, és a milyen? kérdésre felel. A gyorsaság, a sebesség és a verseny főnév.'},
+
+  /* Toldalékok */
+  {t:'toldalek', q:'Milyen sorrendben követik egymást a toldalékok a szótő után?',
+   a:['képző – jel – rag','jel – képző – rag','rag – jel – képző','képző – rag – jel'],
+   e:'Először a képző áll, mert új szót hoz létre, utána a jel, végül a rag. Például: kert + ész + ek + ben → kertészekben.'},
+  {t:'toldalek', q:'Mi az <b>-ek</b> a <b>kertekben</b> szóban?',
+   a:['a többes szám jele','birtokos személyjel','esetrag','képző'],
+   e:'kert + ek + ben: a -k a többes szám jele (előtte az e kötőhangzó), a -ben pedig rag.'},
+  {t:'toldalek', q:'Melyik szóban van <b>képző</b>?',
+   a:['kertész','kertek','kertben','kertem'],
+   e:'Az -ész képző új szót hoz létre, új jelentéssel: a kertész a kertet gondozó ember. A többi szóban jel vagy rag van.'},
+  {t:'toldalek', q:'Melyik toldalék <b>zárja le</b> a szót, vagyis általában nem követi más toldalék?',
+   a:['a rag','a képző','a jel','bármelyik'],
+   e:'A rag a szó végére kerül, utána általában nem állhat más toldalék. Képzőből és jelből viszont több is állhat egymás után.'},
+  {t:'toldalek', q:'Melyik szóban van <b>rag</b>?',
+   a:['házat','házak','háza','házikó'],
+   e:'A házat szóban a -t tárgyrag (előtte a kötőhangzó). A házak szóban a többes szám jele, a háza szóban birtokos személyjel, a házikó szóban kicsinyítő képző van.'},
+  {t:'toldalek', q:'A <b>házikó</b> szóban milyen toldalék az <b>-ikó</b>?',
+   a:['kicsinyítő képző','a többes szám jele','birtokos személyjel','helyhatározó rag'],
+   e:'A kicsinyítő képzők kisebb dolgot vagy kedveskedést fejeznek ki: -ka, -ke, -cska, -cske, -ikó. Például: házikó, kutyuska, kertecske.'},
+  {t:'toldalek', q:'Hogyan bontjuk szóelemekre a <b>tanulóknak</b> szót?',
+   a:['tanul + ó + k + nak','tanuló + kn + ak','tan + ul + ók + nak','tanul + ók + na + k'],
+   e:'tanul (tő) + -ó (képző) + -k (a többes szám jele) + -nak (rag). A sorrend itt is képző – jel – rag.'},
+
+  /* Szám és birtok */
+  {t:'szam', q:'Mi a főnév <b>többes számának</b> jele?',
+   a:['-k','-t','-é','-i'],
+   e:'A többes szám jele a -k, gyakran kötőhangzóval: padok, kertek, tökök, házak.'},
+  {t:'szam', q:'Melyik szó végén a <b>-k</b> a többes szám jele?',
+   a:['padok','barack','csók','mák'],
+   e:'A padok szóban a pad a tő, utána o kötőhangzó és a -k többesjel áll. A barack, a csók és a mák végén a k a szótő része.'},
+  {t:'szam', q:'Hogyan helyes a <b>könyv</b> többes száma?',
+   a:['könyvek','könyvök','könyvak','könyvok'],
+   e:'A könyv magas hangrendű, ezért magas kötőhangzót kap: könyvek. Az ö-s, ü-s szavak egy része -ök-öt kap (tökök), de a könyv, a föld és a fül -ek-et (könyvek, földek, fülek).'},
+  {t:'szam', q:'Mit fejez ki a <b>kutyám</b> szóban az <b>-m</b>?',
+   a:['hogy a kutya az enyém','hogy több kutya van','hogy a kutya a mondat tárgya','hogy a kutya kicsi'],
+   e:'Az -m birtokos személyjel: a birtokos egyes szám első személy (én). Kutyám, kutyád, kutyája, kutyánk, kutyátok, kutyájuk.'},
+  {t:'szam', q:'<b>A ti házatok</b>: milyen személyű birtokost jelöl a <b>-tok</b>?',
+   a:['többes szám 2. személy','többes szám 1. személy','egyes szám 2. személy','többes szám 3. személy'],
+   e:'A -tok, -tek, -tök a többes szám 2. személyű (ti) birtokost jelöli: házatok, kertetek, gyümölcsötök.'},
+  {t:'szam', q:'„Ez a labda <b>Péteré</b>.” Mi az <b>-é</b>?',
+   a:['birtokjel','birtokos személyjel','tárgyrag','képző'],
+   e:'Az -é birtokjel: a birtok nevét helyettesíti. Péter labdája helyett elég annyi: Péteré.'},
+  {t:'szam', q:'„Ezek a könyvek <b>Annáéi</b>.” Mit jelez az <b>-éi</b>?',
+   a:['hogy Annának több birtokáról van szó','hogy több Anna van','hogy a könyvek a mondat tárgyai','hogy a könyvek kicsik'],
+   e:'Az -éi a többes birtokjel: több birtokra utal. Egy könyv → Annáé, több könyv → Annáéi.'},
+  {t:'szam', q:'Melyik szóelem jelzi a <b>barátaim</b> szóban, hogy <b>több barátról</b> van szó?',
+   a:['az -i-','az -a-','az -m','a barát szótő'],
+   e:'Birtokos személyjeles szóban a több birtokot nem a -k, hanem az -i- jelzi (birtoktöbbesítő jel): barátom → barátaim, könyvem → könyveim.'},
+
+  /* Esetragok */
+  {t:'eset', q:'Mi a <b>tárgyrag</b>?',
+   a:['-t','-k','-é','-n'],
+   e:'A tárgyrag a -t, sokszor kötőhangzóval: almát, kertet, házat, könyvet. Kérdése: kit? mit?'},
+  {t:'eset', q:'„A kertben ülök.” Milyen kérdésre felel a <b>kertben</b>?',
+   a:['hol?','hová?','honnan?','mivel?'],
+   e:'A -ban, -ben a hol? kérdésre felel. Hová? → kertbe, honnan? → kertből.'},
+  {t:'eset', q:'Melyik mondat <b>helyes</b>?',
+   a:['A szobában vagyok.','A szobába vagyok.','Bemegyek a szobában.','A szobában szaladok be.'],
+   e:'A -ban, -ben a hol? kérdésre felel (a szobában vagyok), a -ba, -be a hová? kérdésre (bemegyek a szobába). A „szobába vagyok” gyakori hiba.'},
+  {t:'eset', q:'Milyen kérdésre felel a <b>-ból, -ből</b> rag?',
+   a:['honnan?','hol?','hová?','kinek?'],
+   e:'A -ból, -ből valaminek a belsejéből kifelé irányuló mozgást fejez ki: honnan? – a házból, a kertből.'},
+  {t:'eset', q:'Hogyan írjuk helyesen? <b>kéz + -val/-vel</b>',
+   a:['kézzel','kézvel','kézel','kézzal'],
+   e:'Mássalhangzóra végződő szó után a -val, -vel v hangja hasonul: a szó végi mássalhangzó megkettőződik. kéz + vel → kézzel, ház + val → házzal.'},
+  {t:'eset', q:'Hogyan írjuk helyesen? <b>Kossuth + -val/-vel</b>',
+   a:['Kossuthtal','Kossuttal','Kossuthal','Kossuthval'],
+   e:'A régies írású családnevek írásképe nem változik, a -val v-je a kiejtett hanghoz hasonul, és annak betűjével írjuk: Kossuthtal, Madáchcsal.'},
+  {t:'eset', q:'Melyik rag felel a <b>kinek?</b> kérdésre?',
+   a:['-nak, -nek','-nál, -nél','-hoz, -hez, -höz','-ról, -ről'],
+   e:'A -nak, -nek a részeshatározó ragja: kinek? minek? – anyának, testvérnek.'},
+  {t:'eset', q:'Melyik alak felel a <b>hová?</b> kérdésre?',
+   a:['a fához','a fánál','a fától','a fán'],
+   e:'Hová? → fához, fára, fába. Hol? → fánál, fán, fában. Honnan? → fától, fáról, fából.'},
+
+  /* Hangrend, tőváltozatok */
+  {t:'hang', q:'Melyik szó <b>vegyes hangrendű</b>?',
+   a:['virág','asztal','tükör','kenyér'],
+   e:'Vegyes hangrendű az a szó, amelyben magas és mély magánhangzó is van: vi-rág (i és á). Az asztal mély, a tükör és a kenyér magas hangrendű.'},
+  {t:'hang', q:'Melyik szóhoz kapcsolódik a <b>-ben</b> rag (és nem a -ban)?',
+   a:['kert','ház','ablak','virág'],
+   e:'Ez az illeszkedés: a magas hangrendű kert magas hangrendű ragot kap (kertben). A mély és a vegyes hangrendű szavak általában mély ragot kapnak: házban, ablakban, virágban.'},
+  {t:'hang', q:'Mit jelent az <b>illeszkedés</b>?',
+   a:['a toldalék magánhangzója igazodik a szótő magánhangzóihoz','a szó végi mássalhangzó megkettőződik','a szótő magánhangzója megrövidül','két szó egy szóvá kapcsolódik'],
+   e:'Az illeszkedés miatt mondjuk, hogy házban, de kertben, és hogy tökön, de kerten.'},
+  {t:'hang', q:'Mi a <b>ló</b> többes száma?',
+   a:['lovak','lók','lóak','lovok'],
+   e:'A ló változó tövű szó: toldalék előtt lov- tövet kap (lovak, lovat, lovam). Ugyanígy: tó → tavak, hó → havat.'},
+  {t:'hang', q:'Mi a <b>bokor</b> tárgyesete?',
+   a:['bokrot','bokort','bokorot','bokrat'],
+   e:'Hangzókieséses tő: toldalék előtt kiesik a második szótag magánhangzója. bokor → bokrot, tükör → tükröt, majom → majmot.'},
+  {t:'hang', q:'Mi a <b>kéz</b> többes száma?',
+   a:['kezek','kézek','kezzek','kézzek'],
+   e:'Rövidülő tövű szó: toldalék előtt a hosszú é megrövidül. kéz → kezek, víz → vizek, kenyér → kenyerek.'},
+  {t:'hang', q:'Mi a <b>teher</b> tárgyesete?',
+   a:['terhet','tehert','tehret','terht'],
+   e:'A teher toldalékos alakjaiban a h és az r helyet cserél (hangátvetés): terhet, terhek. Ugyanígy: pehely → pelyhet, kehely → kelyhet.'},
+  {t:'hang', q:'Mi a <b>madár</b> többes száma?',
+   a:['madarak','madárak','madárok','madarok'],
+   e:'A madár toldalék előtt megrövidül: madarak, madarat. Ugyanígy: szekér → szekerek, levél → levelek.'},
+  {t:'hang', q:'Mi a <b>kő</b> többes száma?',
+   a:['kövek','kők','kőek','kővek'],
+   e:'A kő toldalék előtt köv- tövet kap: kövek, követ. Ugyanígy: tő → tövek, cső → csövek.'},
+
+  /* Helyesírás */
+  {t:'iras', q:'Melyik írásmód <b>helyes</b>?',
+   a:['Balaton-part','Balatonpart','balaton-part','Balaton part'],
+   e:'Ha földrajzi névhez köznév kapcsolódik, kötőjellel írjuk, és a tulajdonnév megtartja nagy kezdőbetűjét: Balaton-part, Tisza-part, Duna-part.'},
+  {t:'iras', q:'Hogyan írjuk helyesen a <b>Mombasa</b> -i képzős alakját (Mombasában élő ember)?',
+   a:['mombasai','Mombasai','Mombasa-i','mombasaji'],
+   e:'Földrajzi névből -i képzővel alkotott melléknevet kisbetűvel, egybeírva írunk: mombasai, kenyai, budapesti, szegedi.'},
+  {t:'iras', q:'Melyik utcanév írása <b>helyes</b>?',
+   a:['Petőfi Sándor utca','Petőfi Sándor Utca','Petőfi-Sándor-utca','petőfi sándor utca'],
+   e:'A közterületnevekben a köznévi utótagot (utca, tér, út) kisbetűvel, különírva írjuk: Petőfi Sándor utca, Kossuth tér.'},
+  {t:'iras', q:'Hogyan írjuk helyesen? <b>toll + -val/-vel</b>',
+   a:['tollal','tolllal','tolval','tollval'],
+   e:'Köznevekben három azonos mássalhangzót nem írunk egymás mellé, ezért kettőt írunk: toll + val → tollal, sakk + val → sakkal.'},
+  {t:'iras', q:'Hogyan írjuk helyesen? <b>Bernadett + -val/-vel</b>',
+   a:['Bernadett-tel','Bernadettel','Bernadetttel','Bernadettvel'],
+   e:'Ha kettőzött betűre végződő tulajdonnévhez ugyanazzal a mássalhangzóval kezdődő toldalék járul, kötőjelet teszünk, hogy a név írásképe ne változzon: Bernadett-tel, Mariann-nal.'},
+
+  /* Névelő, mondatrész */
+  {t:'mondat', q:'Melyik a <b>határozatlan névelő</b>?',
+   a:['egy','a','az','ez'],
+   e:'A határozatlan névelő az egy (egy kutya), a határozott névelő az a és az az (a kutya, az alma). Az ez mutató névmás.'},
+  {t:'mondat', q:'Mikor áll a főnév előtt az <b>az</b> névelő?',
+   a:['ha a szó magánhangzóval kezdődik','ha a szó mássalhangzóval kezdődik','ha a szó többes számú','ha a szó tulajdonnév'],
+   e:'Magánhangzó előtt az áll (az alma, az ember), mássalhangzó előtt a (a körte, a kutya).'},
+  {t:'mondat', q:'„A macska a kanapén alszik.” Milyen mondatrész a <b>macska</b>?',
+   a:['alany','állítmány','tárgy','határozó'],
+   e:'Az alany azt nevezi meg, aki vagy ami cselekszik. Kérdése: ki? mi? – a macska. A főnév a mondatban leggyakrabban alany, tárgy vagy határozó.'},
+  {t:'mondat', q:'„Martin almát eszik.” Milyen mondatrész az <b>almát</b>?',
+   a:['tárgy','alany','állítmány','jelző'],
+   e:'A tárgy kérdése: kit? mit? A tárgyat a -t tárgyrag jelzi: almát.'}
+];
+
+var LETTERS = ['A','B','C','D','E'];
+var GRADES = [[90,5,'jeles'],[75,4,'jó'],[60,3,'közepes'],[40,2,'elégséges'],[0,1,'elégtelen']];
+var $ = function(id){ return document.getElementById(id); };
+
+var S = {view:'start', count:'10', topics:TOPICS.map(function(t){return t.id;}), name:'', run:null};
+
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var x = a[i]; a[i] = a[j]; a[j] = x; }
+  return a;
+}
+function range(n){ var r = []; for (var i = 0; i < n; i++) r.push(i); return r; }
+function topicName(id){ for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i].id === id) return TOPICS[i].name; return ''; }
+function pool(){ return range(Q.length).filter(function(i){ return S.topics.indexOf(Q[i].t) >= 0; }); }
+function plannedCount(){ var n = pool().length; return S.count === 'all' ? n : Math.min(+S.count, n); }
+function gradeFor(pct){ for (var i = 0; i < GRADES.length; i++) if (pct >= GRADES[i][0]) return GRADES[i]; return GRADES[GRADES.length-1]; }
+
+/* ---------- Setup ---------- */
+function buildStart(){
+  var box = $('topics');
+  TOPICS.forEach(function(t){
+    var n = Q.filter(function(q){ return q.t === t.id; }).length;
+    var lab = document.createElement('label'); lab.className = 'chip';
+    var inp = document.createElement('input'); inp.type = 'checkbox'; inp.id = 't-' + t.id; inp.value = t.id;
+    var sp = document.createElement('span');
+    sp.appendChild(document.createTextNode(t.name + ' '));
+    var em = document.createElement('em'); em.textContent = n; sp.appendChild(em);
+    lab.appendChild(inp); lab.appendChild(sp); box.appendChild(lab);
+    inp.addEventListener('change', function(){
+      S.topics = TOPICS.map(function(x){ return x.id; }).filter(function(id){ return $('t-' + id).checked; });
+      syncStart();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="count"]'), function(r){
+    r.addEventListener('change', function(){ if (r.checked){ S.count = r.value; syncStart(); } });
+  });
+  $('name').addEventListener('input', function(e){ S.name = e.target.value.slice(0, 40); });
+  $('lede-n').textContent = Q.length;
+}
+function syncStart(){
+  TOPICS.forEach(function(t){ $('t-' + t.id).checked = S.topics.indexOf(t.id) >= 0; });
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="count"]'), function(r){ r.checked = (r.value === S.count); });
+  if ($('name').value !== S.name) $('name').value = S.name;
+  var n = pool().length, k = plannedCount();
+  $('c-all-n').textContent = n;
+  $('start').disabled = n === 0;
+  $('start').textContent = n === 0 ? 'Kezdjük' : 'Kezdjük · ' + k + ' kérdés';
+  $('start-msg').textContent = n === 0 ? 'Válassz legalább egy témakört.' : '';
+}
+
+/* ---------- Quiz ---------- */
+function startRun(idxs){
+  S.run = {
+    items: shuffle(idxs).map(function(qi){ return {qi:qi, order:shuffle(range(Q[qi].a.length))}; }),
+    idx: 0,
+    picks: []
+  };
+  S.view = 'quiz';
+  render();
+  window.scrollTo(0, 0);
+  $('q-text').focus({preventScroll:true});
+}
+function isAnswered(R, i){ return typeof R.picks[i] === 'number'; }
+function correctCount(R){ var c = 0; R.items.forEach(function(it, i){ if (R.picks[i] === 0) c++; }); return c; }
+
+function renderQuiz(){
+  var R = S.run, it = R.items[R.idx], q = Q[it.qi], total = R.items.length;
+  var answered = isAnswered(R, R.idx), picked = R.picks[R.idx];
+  $('q-topic').textContent = topicName(q.t);
+  $('q-counter').textContent = (R.idx + 1) + '. kérdés / ' + total;
+  $('q-bar').style.width = ((R.idx + (answered ? 1 : 0)) / total * 100) + '%';
+  $('q-text').innerHTML = q.q;
+
+  var ol = $('q-options'); ol.innerHTML = '';
+  it.order.forEach(function(ai, pos){
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'opt'; b.id = 'opt-' + pos;
+    b.innerHTML = '<span class="key" aria-hidden="true">' + LETTERS[pos] + '</span><span class="txt"></span><span class="mark" aria-hidden="true"></span>';
+    b.querySelector('.txt').textContent = q.a[ai];
+    if (answered){
+      b.disabled = true;
+      if (ai === 0){ b.classList.add('is-correct'); b.querySelector('.mark').textContent = '✓'; b.setAttribute('aria-label', q.a[ai] + ' – helyes válasz'); }
+      else if (ai === picked){ b.classList.add('is-wrong'); b.querySelector('.mark').textContent = '✗'; b.setAttribute('aria-label', q.a[ai] + ' – a te válaszod, hibás'); }
+      else b.classList.add('is-dim');
+    } else {
+      b.addEventListener('click', function(){ pick(ai); });
+    }
+    li.appendChild(b); ol.appendChild(li);
+  });
+
+  var fb = $('q-feedback');
+  if (answered){
+    var ok = picked === 0;
+    $('q-verdict').textContent = ok ? 'Helyes!' : 'Nem ez a jó válasz.';
+    $('q-verdict').className = 'verdict ' + (ok ? 'ok' : 'bad');
+    $('q-rule').innerHTML = q.e;
+    fb.hidden = false;
+  } else fb.hidden = true;
+
+  $('q-next').hidden = !answered;
+  $('q-next').textContent = R.idx === total - 1 ? 'Eredmény megtekintése' : 'Következő kérdés';
+  $('q-score').textContent = 'Eddig ' + correctCount(R) + ' helyes';
+  resetQuit();
+}
+function pick(ai){
+  var R = S.run;
+  if (isAnswered(R, R.idx)) return;
+  R.picks[R.idx] = ai;
+  renderQuiz();
+  $('q-next').focus({preventScroll:true});
+  var fb = $('q-feedback');
+  if (fb.getBoundingClientRect().bottom > window.innerHeight) $('q-next').scrollIntoView({block:'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+}
+function next(){
+  var R = S.run;
+  if (!isAnswered(R, R.idx)) return;
+  if (R.idx < R.items.length - 1){
+    R.idx++;
+    renderQuiz();
+    $('v-quiz').scrollIntoView({block:'start'});
+    $('q-text').focus({preventScroll:true});
+  } else {
+    S.view = 'result';
+    render();
+    window.scrollTo(0, 0);
+    $('r-head').focus({preventScroll:true});
+  }
+}
+var quitArmed = false, quitTimer = null;
+function resetQuit(){ quitArmed = false; clearTimeout(quitTimer); $('q-quit').textContent = 'Kilépés'; }
+$('q-quit').addEventListener('click', function(){
+  if (!quitArmed){
+    quitArmed = true;
+    $('q-quit').textContent = 'Biztosan kilépsz? Kattints újra';
+    quitTimer = setTimeout(resetQuit, 4000);
+    return;
+  }
+  resetQuit();
+  S.view = 'start'; S.run = null; render();
+  $('start').focus();
+});
+
+/* ---------- Result ---------- */
+function resultData(){
+  var R = S.run, total = R.items.length, correct = correctCount(R);
+  var pct = total ? Math.round(correct / total * 100) : 0;
+  var g = gradeFor(pct);
+  var byTopic = [];
+  TOPICS.forEach(function(t){
+    var all = 0, good = 0;
+    R.items.forEach(function(it, i){ if (Q[it.qi].t === t.id){ all++; if (R.picks[i] === 0) good++; } });
+    if (all) byTopic.push({name:t.name, all:all, good:good});
+  });
+  var wrong = [];
+  R.items.forEach(function(it, i){ if (R.picks[i] !== 0) wrong.push({qi:it.qi, pick:R.picks[i]}); });
+  return {total:total, correct:correct, pct:pct, grade:g[1], gradeName:g[2], byTopic:byTopic, wrong:wrong};
+}
+function renderResult(){
+  var d = resultData(), nm = S.name.trim();
+  $('r-grade').textContent = d.grade;
+  $('r-gradebox').setAttribute('aria-label', 'Tájékoztató jegy: ' + d.grade + ', ' + d.gradeName);
+  $('r-who').textContent = nm ? 'Eredménylap · ' + nm : 'Eredménylap';
+  $('r-head').textContent = d.correct + ' / ' + d.total + ' helyes válasz';
+  $('r-sub').textContent = d.pct + '% · tájékoztató jegy: ' + d.gradeName + ' (' + d.grade + ')';
+
+  var tb = $('r-break'); tb.innerHTML = '';
+  d.byTopic.forEach(function(x){
+    var tr = document.createElement('tr');
+    var th = document.createElement('th'); th.scope = 'row'; th.textContent = x.name;
+    var tdN = document.createElement('td'); tdN.className = 'num'; tdN.textContent = x.good + ' / ' + x.all;
+    var tdB = document.createElement('td'); tdB.className = 'barcell';
+    var bar = document.createElement('span'); bar.className = 'minibar'; bar.setAttribute('aria-hidden', 'true');
+    var fill = document.createElement('span'); fill.style.width = (x.good / x.all * 100) + '%'; if (x.good === x.all) fill.className = 'full';
+    bar.appendChild(fill); tdB.appendChild(bar);
+    tr.appendChild(th); tr.appendChild(tdN); tr.appendChild(tdB); tb.appendChild(tr);
+  });
+
+  var ol = $('r-review'); ol.innerHTML = '';
+  $('r-review-title').textContent = d.wrong.length ? 'Átnézendő kérdések (' + d.wrong.length + ')' : 'Átnézendő kérdések';
+  $('r-perfect').hidden = d.wrong.length > 0;
+  ol.hidden = d.wrong.length === 0;
+  $('r-retry').hidden = d.wrong.length === 0;
+  d.wrong.forEach(function(w){
+    var q = Q[w.qi];
+    var li = document.createElement('li');
+    var pq = document.createElement('p'); pq.className = 'rq'; pq.innerHTML = q.q;
+    var pa = document.createElement('p'); pa.className = 'ra bad';
+    pa.appendChild(document.createTextNode('Válaszod: '));
+    var s = document.createElement('s'); s.textContent = typeof w.pick === 'number' ? q.a[w.pick] : '–'; pa.appendChild(s);
+    var pc = document.createElement('p'); pc.className = 'ra ok'; pc.textContent = 'Helyes: ' + q.a[0];
+    var pr = document.createElement('p'); pr.className = 'rr'; pr.innerHTML = q.e;
+    li.appendChild(pq); li.appendChild(pa); li.appendChild(pc); li.appendChild(pr);
+    ol.appendChild(li);
+  });
+
+  $('r-copytext').hidden = true;
+  $('r-copystatus').textContent = '';
+}
+function resultText(){
+  var d = resultData(), nm = S.name.trim();
+  var date = new Date().toLocaleDateString('hu-HU');
+  var lines = [];
+  lines.push('Főnévpróba' + (nm ? ' – ' + nm : ''));
+  lines.push(d.correct + '/' + d.total + ' helyes válasz (' + d.pct + '%), tájékoztató jegy: ' + d.gradeName + ' (' + d.grade + ')');
+  lines.push('Témakörök: ' + d.byTopic.map(function(x){ return x.name + ' ' + x.good + '/' + x.all; }).join(', '));
+  lines.push(date);
+  return lines.join('\n');
+}
+$('r-retry').addEventListener('click', function(){
+  var d = resultData();
+  if (d.wrong.length) startRun(d.wrong.map(function(w){ return w.qi; }));
+});
+$('r-new').addEventListener('click', function(){
+  S.view = 'start'; S.run = null; render(); window.scrollTo(0, 0); $('start').focus();
+});
+$('r-copy').addEventListener('click', function(){
+  var text = resultText();
+  function fallback(){
+    var ta = $('r-copytext'); ta.value = text; ta.hidden = false; ta.focus(); ta.select();
+    $('r-copystatus').textContent = 'A másolás itt nem sikerült automatikusan. Jelöld ki a fenti szöveget, és másold ki.';
+  }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        $('r-copystatus').textContent = 'Kimásolva. Beillesztheted üzenetbe vagy e-mailbe.';
+      }, fallback);
+    } else fallback();
+  } catch (err){ fallback(); }
+});
+
+/* ---------- Shared ---------- */
+$('start').addEventListener('click', function(){
+  var p = pool(); if (!p.length) return;
+  startRun(shuffle(p).slice(0, plannedCount()));
+});
+$('q-next').addEventListener('click', next);
+
+document.addEventListener('keydown', function(e){
+  if (S.view !== 'quiz' || !S.run || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.target && e.target.matches && e.target.matches('input, textarea')) return;
+  var R = S.run, it = R.items[R.idx], answered = isAnswered(R, R.idx);
+  var k = (e.key || '').toLowerCase();
+  var pos = '1234'.indexOf(k); if (pos < 0 || k === '') pos = 'abcd'.indexOf(k);
+  if (!answered && k.length === 1 && pos >= 0 && pos < it.order.length){
+    e.preventDefault(); pick(it.order[pos]);
+  } else if (answered && (e.key === 'Enter' || e.key === 'ArrowRight') && e.target !== $('q-next')){
+    e.preventDefault(); next();
+  }
+});
+
+function render(){
+  $('wrap').setAttribute('data-view', S.view);
+  $('v-start').hidden = S.view !== 'start';
+  $('v-quiz').hidden = S.view !== 'quiz';
+  $('v-result').hidden = S.view !== 'result';
+  if (S.view === 'start') syncStart();
+  else if (S.view === 'quiz') renderQuiz();
+  else renderResult();
+}
+
+function boot(data){
+  if (data && data.S && typeof data.S === 'object'){
+    var d = data.S;
+    if (d.view === 'quiz' || d.view === 'result' || d.view === 'start') S.view = d.view;
+    if (typeof d.count === 'string') S.count = d.count;
+    if (Array.isArray(d.topics)) S.topics = d.topics;
+    if (typeof d.name === 'string') S.name = d.name;
+    S.run = d.run && Array.isArray(d.run.items) && d.run.items.every(function(it){ return Q[it.qi]; }) ? d.run : null;
+    if (S.view !== 'start' && !S.run) S.view = 'start';
+  }
+  render();
+}
+
+buildStart();
+var hot = window.claude && window.claude.hot;
+if (hot && typeof hot.snapshot === 'function') hot.snapshot(function(){ return {S:S}; });
+if (hot && typeof hot.ready === 'function') hot.ready(boot); else boot((hot && hot.data) || {});
+})();
+</script>
+</body>
+</html>
